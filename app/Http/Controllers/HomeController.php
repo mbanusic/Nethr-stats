@@ -20,13 +20,12 @@ class HomeController extends Controller
 
     public function index() {
 	    $users = User::all();
-	    $months = [1,2,3,4];
+	    $months = [1,2,3,4,5];
     	return view('home', compact('users', 'months'));
     }
 
     public function date($date)
     {
-
 		$users = User::all();
 		$month = intval(substr($date, 0, 2));
 		$year = intval(substr($date, -4));
