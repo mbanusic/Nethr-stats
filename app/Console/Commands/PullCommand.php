@@ -49,28 +49,41 @@ class PullCommand extends Command
         $this->auth = env('WP_AUTH');
         $this->blog_id = env('WP_BLOG');
 
-	    $$this->client = new GuzzleHttp\Client();
+	    $this->client = new GuzzleHttp\Client();
 
+	    $day   = date('d')-1;
+	    $month = date('m');
+	    $year  = date('Y');
 
-	    $day    = date('d')-1;
-	    $year   = date('Y');
+	    $this->pull_day($day, $month, $year);
+
+	    return true;
+    }
+
+    private function pullOld() {
+    	$months = [1,2,3,4,5];
+    	foreach ($months as $month) {
+			for($i=1; $i<=cal_days_in_month(CAL_GREGORIAN, $month, 2017); $i++) {
+				if ($month == 5 && $i>9) {
+					continue;
+				}
+				$this->pull_day($i, $month, 2017);
+			}
+	    }
+    }
+
+    private function pull_day($day, $month, $year) {
+	    $month2 = $month;
 	    $day2   = $day + 1;
-	    $month = $month2 = date('m');
-	    $year2  = date('Y');
+	    $year2  = $year;
 	    if ( $day2 > cal_days_in_month(CAL_GREGORIAN, $month, $year) ) {
 		    $day2 = 1;
 		    $month2 ++;
 		    if ($month2 == 13) {
-		        $month2 = 1;
-		        $year2++;
+			    $month2 = 1;
+			    $year2++;
 		    }
 	    }
-	    
-	    $this->pull($day, $month, $year, $day2, $month2, $year2);
-	    return true;
-    }
-
-    private function pull($day, $month, $year, $day2, $month2, $year2) {
 	    $s      = true;
 	    $data   = [];
 	    $offset = 0;
@@ -99,17 +112,21 @@ class PullCommand extends Command
 					    if ( ! mb_strlen( $post['content'] ) ) {
 						    continue;
 					    }
+					    $content = strip_tags( $post['content'] );
+					    $content = str_replace(' ', '', $content);
+					    $content = str_replace("\r", '', $content);
+					    $content = str_replace("\n", '', $content);
 					    if ( isset( $data[ $post['author']['login'] ] ) ) {
 						    $data[ $post['author']['login'] ]['post_count'] ++;
 						    $data[ $post['author']['login'] ]['img_count']  += substr_count( $post['content'], 'img' );
-						    $data[ $post['author']['login'] ]['char_count'] += mb_strlen( str_replace( ' ', '', strip_tags( $post['content'] ) ) );
+						    $data[ $post['author']['login'] ]['char_count'] += mb_strlen( $content );
 					    } else {
 						    $data[ $post['author']['login'] ] = [
 							    'name'       => $post['author']['name'],
 							    'email'      => $post['author']['email'],
 							    'post_count' => 1,
 							    'img_count'  => substr_count( $post['content'], 'img' ),
-							    'char_count' => mb_strlen( strip_tags( $post['content'] ) )
+							    'char_count' => mb_strlen( $content )
 						    ];
 					    }
 				    }
