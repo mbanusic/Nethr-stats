@@ -26,13 +26,13 @@
                     <div class="form-group">
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input type="checkbox" name="admin" class="form-check-input" {{ $user->admin?'checked':'' }}>
+                                <input type="checkbox" name="admin" value="1" class="form-check-input" {{ $user->admin?'checked':'' }}>
                                 Admin
                             </label>
                         </div>
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input type="checkbox" name="hidden" class="form-check-input" {{ $user->hidden?'checked':'' }}>
+                                <input type="checkbox" name="hidden" value="1" class="form-check-input" {{ $user->hidden?'checked':'' }}>
                                 Skriven
                             </label>
                         </div>

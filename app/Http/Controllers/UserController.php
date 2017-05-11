@@ -28,8 +28,8 @@ class UserController extends Controller
 				['id' => $id],
 				[
 					'name' => $request->get('name'),
-					'admin' => $request->get('admin'),
-					'hidden' => $request->get('hidden')
+					'admin' => intval($request->get('admin')),
+					'hidden' => intval($request->get('hidden'))
 				]
 			);
 
