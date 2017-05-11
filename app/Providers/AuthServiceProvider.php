@@ -25,12 +25,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-	    Gate::define('update-user', function ($user, $other) {
-	    	if (in_array($user->id, [36, 38])) { //allow "admins" to update users
+	    Gate::define('update-user', function ($user, $id) {
+	    	if ($user->admin) { //allow "admins" to update users
 	    		return true;
 		    }
 			//allow users to update their profiles
-		    return $user->id == $other->id;
+		    return $user->id == $id;
 	    });
     }
 }
