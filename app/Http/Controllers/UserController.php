@@ -23,17 +23,20 @@ class UserController extends Controller
 	}
 
 	public function postUser(Request $request, $id = null) {
-		$user = User::updateOrCreate(
-			['id' => $id],
-			[
-				'name' => $request->get('name'),
-			]
-		);
-		if (Gate::allows('update-user', $user)) {
+		if (Gate::allows('update-user', $id)) {
+			$user = User::updateOrCreate(
+				['id' => $id],
+				[
+					'name' => $request->get('name'),
+					'admin' => $request->get('admin'),
+					'hidden' => $request->get('hidden')
+				]
+			);
+
 			if ($request->get('password')) {
 				$user->password = bcrypt($request->get('password'));
+				$user->save();
 			}
-			$user->save();
 		}
 		return redirect('users');
 	}

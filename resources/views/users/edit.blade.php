@@ -23,6 +23,20 @@
                         <input type="password" name="password" id="password" class="form-control">
                         <small class="form-text text-muted">Unesite samo ako želite promjeniti lozinku</small>
                     </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" name="admin" class="form-check-input">
+                                Admin
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" name="hidden" class="form-check-input">
+                                Skriven
+                            </label>
+                        </div>
+                    </div>
                     <button class="btn btn-primary"  type="submit">Spremi</button>
                 </form>
             </div>
