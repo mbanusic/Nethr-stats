@@ -18,7 +18,7 @@
             <tbody>
             @foreach($users as $user)
                 <tr>
-                    <td rowspan="2">{{ $user->id }}</td>
+                    <td rowspan="2">{{ $loop->iteration }}</td>
                     <td rowspan="2">{{ $user->name }}</td>
                     <td rowspan="2">{{ $user->email }}</td>
                     <td>{{ $user->stats->sum('posts') }}</td>

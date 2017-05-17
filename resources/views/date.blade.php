@@ -18,7 +18,7 @@
                 <tbody>
                 @foreach($users as $user)
                     <tr>
-                    <th rowspan="2">{{ $user->id }}</th>
+                    <th rowspan="2">{{ $loop->iteration }}</th>
                     <th rowspan="2">{{ $user->name }}</th>
                         <td>{{ $user->stats->where('month', $month)->sum('posts') }}</td>
                         @for ($i = 1; $i <= cal_days_in_month(CAL_GREGORIAN, $month, $year); $i++)

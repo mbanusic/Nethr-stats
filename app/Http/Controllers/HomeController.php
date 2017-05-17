@@ -26,7 +26,7 @@ class HomeController extends Controller
 
     public function date($date)
     {
-		$users = User::all();
+		$users = User::where('hidden', null)->get();
 		$month = intval(substr($date, 0, 2));
 		$year = intval(substr($date, -4));
         return view('date', compact('users', 'month', 'year'));
