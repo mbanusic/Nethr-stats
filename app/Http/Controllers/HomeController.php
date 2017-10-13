@@ -29,6 +29,12 @@ class HomeController extends Controller
 		$users = User::where('hidden', null)->orWhere('hidden', 0)->orderBy('name', 'asc')->get();
 		$month = intval(substr($date, 0, 2));
 		$year = intval(substr($date, -4));
-        return view('date', compact('users', 'month', 'year'));
+		$total_char = Stat::where('year', '=', $year)->where('month', '=', $month)->get()->mapToGroups(function($stat) {
+			return [$stat['day'] => $stat['chars']];
+		});
+		$total_post = Stat::where('year', '=', $year)->where('month', '=', $month)->get()->mapToGroups(function($stat) {
+			return [$stat['day'] => $stat['posts']];
+    });
+        return view('date', compact('users', 'month', 'year', 'total_char', 'total_post'));
     }
 }

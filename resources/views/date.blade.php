@@ -32,6 +32,24 @@
                         @endfor
                     </tr>
                 @endforeach
+                <tr>
+                    <th rowspan="2"></th>
+                    <th rowspan="2">Ukupno</th>
+                    <td>{{ $total_post->sum(function($item) {
+                    return $item->sum();
+                    }) }}</td>
+                    @for ($i = 1; $i <= cal_days_in_month(CAL_GREGORIAN, $month, $year); $i++)
+                        <td>{{ $total_post[$i]->sum() }}</td>
+                    @endfor
+                </tr>
+                <tr>
+                    <td>{{ $total_char->sum(function($item) {
+                    return $item->sum();
+                    }) }}</td>
+                    @for ($i = 1; $i <= cal_days_in_month(CAL_GREGORIAN, $month, $year); $i++)
+                        <td>{{ $total_char[$i]->sum() }}</td>
+                    @endfor
+                </tr>
                 </tbody>
             </table>
         </div>
