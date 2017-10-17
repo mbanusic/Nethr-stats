@@ -73,6 +73,116 @@ class PullCommand extends Command
 	    }
     }
 
+    public function pullOldCategory($day, $month, $year) {
+	    $month2 = $month;
+	    $day2   = $day + 1;
+	    $year2  = $year;
+	    if ( $day2 > cal_days_in_month(CAL_GREGORIAN, $month, $year) ) {
+		    $day2 = 1;
+		    $month2 ++;
+		    if ($month2 == 13) {
+			    $month2 = 1;
+			    $year2++;
+		    }
+	    }
+	    $s      = true;
+	    $cats   = [
+		    'danas' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+		    'sport' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+		    'hot'   => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+		    'magazin' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+		    'zena' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+		    'auto' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+		    'webcafe' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+	    ];
+	    $offset = 0;
+	    while ( $s ) {
+		    $res    = $this->client->request( 'GET', 'https://public-api.wordpress.com/rest/v1.1/sites/' . $this->blog_id . '/posts/', [
+			    'headers' => [
+				    'Authorization' => 'Bearer ' . $this->auth
+			    ],
+			    'query'   => [
+				    'context' => 'edit',
+				    'type'    => 'any',
+				    'number'  => 20,
+				    'offset'  => $offset,
+				    'after'   => Carbon::create( $year, $month, $day, 1, 0, 0, 'Europe/Zagreb' )->toIso8601String(),
+				    'before'  => Carbon::create( $year2, $month2, $day2, 1, 0, 0, 'Europe/Zagreb' )->toIso8601String()
+			    ]
+		    ] );
+		    $status = $res->getStatusCode();
+		    if ( 200 == $status ) {
+			    $body = json_decode( $res->getBody(), true );
+			    if ( count( $body['posts'] ) ) {
+				    foreach ( $body['posts'] as $post ) {
+					    if ( 'attachment' == $post['type'] ) {
+						    continue;
+					    }
+					    if ( ! mb_strlen( $post['content'] ) ) {
+						    continue;
+					    }
+					    $content = strip_tags( $post['content'] );
+					    $content = str_replace(' ', '', $content);
+					    $content = str_replace("\r", '', $content);
+					    $content = str_replace("\n", '', $content);
+					    $url = $post['URL'];
+					    if (strpos($url, 'net.hr/danas')>-1 || strpos($url, 'net.hr/vijesti')>-1) {
+						    $cats['danas']['posts']++;
+						    $cats['danas']['chars'] += mb_strlen( $content );
+						    $cats['danas']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/sport')>-1) {
+						    $cats['sport']['posts']++;
+						    $cats['sport']['chars'] += mb_strlen( $content );
+						    $cats['sport']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/zena')>-1) {
+						    $cats['zena']['posts']++;
+						    $cats['zena']['chars'] += mb_strlen( $content );
+						    $cats['zena']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/hot')>-1) {
+						    $cats['hot']['posts']++;
+						    $cats['hot']['chars'] += mb_strlen( $content );
+						    $cats['hot']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/magazin')>-1) {
+						    $cats['magazin']['posts']++;
+						    $cats['magazin']['chars'] += mb_strlen( $content );
+						    $cats['magazin']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/auto')>-1) {
+						    $cats['auto']['posts']++;
+						    $cats['auto']['chars'] += mb_strlen( $content );
+						    $cats['auto']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/webcafe')>-1) {
+						    $cats['webcafe']['posts']++;
+						    $cats['webcafe']['chars'] += mb_strlen( $content );
+						    $cats['webcafe']['images'] += substr_count( $post['content'], 'img' );
+					    }
+				    }
+			    } else {
+				    $s = false;
+			    }
+		    } else {
+			    $s = false;
+		    }
+		    $offset += 20;
+	    }
+	    foreach ($cats as $cat => $data) {
+		    $c = CatStat::create([
+			    'chars'   => $data['chars'],
+			    'posts'   => $data['posts'],
+			    'images'  => $data['images'],
+			    'day'     => $day,
+			    'month'   => $month,
+			    'year'    => $year,
+			    'category' => $cat
+		    ]);
+	    }
+	}
+
     private function pull_day($day, $month, $year) {
 	    $month2 = $month;
 	    $day2   = $day + 1;
