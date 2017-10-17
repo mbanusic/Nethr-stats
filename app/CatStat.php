@@ -22,11 +22,4 @@ class CatStat extends Model {
 		return $query->where('year', $year);
 	}
 
-	public function getCharsAttribute() {
-		return number_format($this->attributes['chars'], 0, ',', '.');
-	}
-
-	public function getPostsAttribute() {
-		return number_format($this->attributes['posts'], 0, ',', '.');
-	}
 }
