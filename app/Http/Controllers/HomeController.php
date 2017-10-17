@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CatStat;
 use App\Stat;
 use App\User;
 use Illuminate\Http\Request;
@@ -35,6 +36,22 @@ class HomeController extends Controller
 		$total_post = Stat::where('year', '=', $year)->where('month', '=', $month)->get()->mapToGroups(function($stat) {
 			return [$stat['day'] => $stat['posts']];
     });
+
         return view('date', compact('users', 'month', 'year', 'total_char', 'total_post'));
+    }
+
+    public function cat_date($date) {
+	    $month = intval(substr($date, 0, 2));
+	    $year = intval(substr($date, -4));
+	    $cats = CatStat::where('year', '=', $year)->where('month', '=', $month)->get();
+	    $out = [];
+		foreach ($cats as $cat) {
+
+			$out[$cat->category][$cat->day] = [
+					'posts' => $cat->posts,
+					'chars' => $cat->chars
+			];
+		}
+	    return view('cat_date', compact('out', 'month', 'year'));
     }
 }

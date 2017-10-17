@@ -39,7 +39,7 @@
                     return $item->sum();
                     }) }}</td>
                     @for ($i = 1; $i <= cal_days_in_month(CAL_GREGORIAN, $month, $year); $i++)
-                        <td>{{ $total_post[$i]->sum() }}</td>
+                        <td>{{ isset($total_post[$i])?$total_post[$i]->sum():0 }}</td>
                     @endfor
                 </tr>
                 <tr>
@@ -47,9 +47,28 @@
                     return $item->sum();
                     }) }}</td>
                     @for ($i = 1; $i <= cal_days_in_month(CAL_GREGORIAN, $month, $year); $i++)
-                        <td>{{ $total_char[$i]->sum() }}</td>
+                        <td>{{ isset($total_char[$i])?$total_char[$i]->sum():0 }}</td>
                     @endfor
                 </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table table-bordered table-striped table-responsive">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Kategorija</th>
+                    <th>Total</th>
+                    @for($i = 1; $i <= cal_days_in_month(CAL_GREGORIAN, $month, $year); $i++)
+                        <th>{{ $i }}. {{ $month }}. {{ $year }}.</th>
+                    @endfor
+                </tr>
+                </thead>
+                <tbody>
+
                 </tbody>
             </table>
         </div>

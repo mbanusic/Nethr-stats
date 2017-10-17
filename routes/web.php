@@ -22,7 +22,7 @@ Route::group(['prefix' => 'users'], function() {
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/home', 'HomeController@index');
-
+Route::get('/cat/{date}', 'HomeController@cat_date');
 Route::get('/{date}', 'HomeController@date');
 
 

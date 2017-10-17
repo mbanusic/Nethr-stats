@@ -11,7 +11,7 @@
                 <th>Email</th>
                 <th>Objave / Znakovi</th>
                 @foreach($months as $month)
-                    <th><a href="{{ url(sprintf('%02d%d', $month, 2017)) }}">{{ date('M', mktime(0, 0, 0, $month)) }}</a></th>
+                    <th><a href="{{ url(sprintf('%02d%d', $month, 2017)) }}">{{ date('M', mktime(0, 0, 0, $month)) }}</a> / <a href="/cat/{{ url(sprintf('%02d%d', $month, 2017)) }}">{{ date('M', mktime(0, 0, 0, $month)) }}">Cat</a></th>
                 @endforeach
             </tr>
             </thead>

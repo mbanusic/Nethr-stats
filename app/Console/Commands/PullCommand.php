@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\CatStat;
 use App\Stat;
 use App\User;
 use Carbon\Carbon;
@@ -86,6 +87,15 @@ class PullCommand extends Command
 	    }
 	    $s      = true;
 	    $data   = [];
+	    $cats   = [
+	    	'danas' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+	    	'sport' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+	    	'hot'   => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+	    	'magazin' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+	    	'zena' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+	    	'auto' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+	    	'webcafe' => [ 'chars' => 0, 'posts' => 0, 'images' => 0 ],
+	    ];
 	    $offset = 0;
 	    while ( $s ) {
 		    $res    = $this->client->request( 'GET', 'https://public-api.wordpress.com/rest/v1.1/sites/' . $this->blog_id . '/posts/', [
@@ -129,6 +139,42 @@ class PullCommand extends Command
 							    'char_count' => mb_strlen( $content )
 						    ];
 					    }
+					    $url = $post['URL'];
+					    if (strpos($url, 'net.hr/danas')>-1 || strpos($url, 'net.hr/vijesti')>-1) {
+					    	$cats['danas']['posts']++;
+					    	$cats['danas']['chars'] += mb_strlen( $content );
+					    	$cats['danas']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/sport')>-1) {
+						    $cats['sport']['posts']++;
+						    $cats['sport']['chars'] += mb_strlen( $content );
+						    $cats['sport']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/zena')>-1) {
+						    $cats['zena']['posts']++;
+						    $cats['zena']['chars'] += mb_strlen( $content );
+						    $cats['zena']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/hot')>-1) {
+						    $cats['hot']['posts']++;
+						    $cats['hot']['chars'] += mb_strlen( $content );
+						    $cats['hot']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/magazin')>-1) {
+						    $cats['magazin']['posts']++;
+						    $cats['magazin']['chars'] += mb_strlen( $content );
+						    $cats['magazin']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/auto')>-1) {
+						    $cats['auto']['posts']++;
+						    $cats['auto']['chars'] += mb_strlen( $content );
+						    $cats['auto']['images'] += substr_count( $post['content'], 'img' );
+					    }
+					    if (strpos($url, 'net.hr/webcafe')>-1) {
+						    $cats['webcafe']['posts']++;
+						    $cats['webcafe']['chars'] += mb_strlen( $content );
+						    $cats['webcafe']['images'] += substr_count( $post['content'], 'img' );
+					    }
 				    }
 			    } else {
 				    $s = false;
@@ -157,6 +203,17 @@ class PullCommand extends Command
 			    'year'    => $year,
 			    'user_id' => $user->id
 		    ] );
+	    }
+	    foreach ($cats as $cat => $data) {
+	    	$c = CatStat::create([
+			    'chars'   => $data['chars'],
+			    'posts'   => $data['posts'],
+			    'images'  => $data['images'],
+			    'day'     => $day,
+			    'month'   => $month,
+			    'year'    => $year,
+			    'category' => $cat
+		    ]);
 	    }
     }
 }
