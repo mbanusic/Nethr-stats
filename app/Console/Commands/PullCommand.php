@@ -52,9 +52,9 @@ class PullCommand extends Command
 
 	    $this->client = new GuzzleHttp\Client();
 
-	    $day   = date('d')-1;
-	    $month = date('m');
-	    $year  = date('Y');
+	    $day   = date('d', strtotime('yesterday'));
+	    $month = date('m', strtotime('yesterday'));
+	    $year  = date('Y', strtotime('yesterday'));
 
 	    $this->pull_day($day, $month, $year);
 

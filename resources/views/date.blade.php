@@ -47,7 +47,6 @@
                     <td>{{ $total_char->sum(function($item) {
                     return $item->sum();
                     }) }}
-                        {{ $total_char[16]->sum() }}
                     </td>
                     @for ($i = 1; $i <= cal_days_in_month(CAL_GREGORIAN, $month, $year); $i++)
                         <td>{{ isset($total_char[$i])?number_format($total_char[$i]->sum(), 0):0 }}</td>
