@@ -10,11 +10,10 @@
                 <th>Ime</th>
                 <th>Email</th>
                 <th>Objave / Znakovi</th>
-                @foreach($months as $month)
-                    <th><a href="{{ url(sprintf('%02d%d', $month, 2017)) }}">{{ date('M', mktime(0, 0, 0, $month)) }}</a> / <a href="{{ url('cat/'.sprintf('%02d%d', $month, 2017)) }}">Cat</a></th>
-                @endforeach
-                @foreach($months as $month)
-                    <th><a href="{{ url(sprintf('%02d%d', $month, 2018)) }}">{{ date('M', mktime(0, 0, 0, $month)) }}</a> / <a href="{{ url('cat/'.sprintf('%02d%d', $month, 2018)) }}">Cat</a></th>
+                @foreach([2017,2018] as $year)
+                    @foreach($months as $month)
+                        <th><a href="{{ url(sprintf('%02d%d', $month, $year)) }}">{{ date('M', mktime(0, 0, 0, $month)) }} {{ $year }}</a> / <a href="{{ url('cat/'.sprintf('%02d%d', $month, $year)) }}">Cat</a></th>
+                    @endforeach
                 @endforeach
             </tr>
             </thead>
@@ -25,21 +24,18 @@
                     <td rowspan="2">{{ $user->name }}</td>
                     <td rowspan="2">{{ $user->email }}</td>
                     <td>{{ $user->stats->sum('posts') }}</td>
-
-                    @foreach($months as $month)
-                        <td>{{ $user->stats->where('month', $month)->where('year', 2017)->sum('posts') }}</td>
-                    @endforeach
-                    @foreach($months as $month)
-                        <td>{{ $user->stats->where('month', $month)->where('year', 2018)->sum('posts') }}</td>
+                    @foreach([2017,2018] as $year)
+                        @foreach($months as $month)
+                            <td>{{ $user->stats->where('month', $month)->where('year', $year)->sum('posts') }}</td>
+                        @endforeach
                     @endforeach
                 </tr>
                 <tr>
                     <td>{{ $user->stats->sum('chars') }}</td>
-                    @foreach($months as $month)
-                        <td>{{ $user->stats->where('month', $month)->where('year', 2017)->sum('chars') }}</td>
-                    @endforeach
-                    @foreach($months as $month)
-                        <td>{{ $user->stats->where('month', $month)->where('year', 2018)->sum('chars') }}</td>
+                    @foreach([2017,2018] as $year)
+                        @foreach($months as $month)
+                            <td>{{ $user->stats->where('month', $month)->where('year', $year)->sum('chars') }}</td>
+                        @endforeach
                     @endforeach
                 </tr>
             @endforeach
